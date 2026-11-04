@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Tubuh Interaktif - Sistem Saraf & Gerak</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b132b',
+                        cardBg: '#1c2541',
+                        accentGreen: '#00b4d8',
+                        pinkBrain: '#ff70a6',
+                        yellowNerve: '#ffd166',
+                        redMuscle: '#ef476f',
+                        whiteBone: '#e0e1dd'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b132b;
+            color: #f8fafc;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 180, 216, 0.05) 0%, transparent 20%),
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 24px 24px, 24px 24px;
+        }
+
+        /* SVG Interactive Elements Hover & Active */
+        .body-part {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .body-part:hover {
+            filter: drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.8));
+            opacity: 0.9;
+        }
+
+        .body-part.active {
+            filter: drop-shadow(0px 0px 12px currentColor);
+            stroke: #ffffff;
+            stroke-width: 2.5px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b132b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1c2541;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a506b;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-100">
+
+    <!-- Header / Navigation Bar -->
+    <header class="w-full border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-cyan-400 animate-pulse"></div>
+                <span class="font-bold text-lg tracking-wide text-cyan-400">EduSaraf & Gerak</span>
+            </div>
+            
+            <nav class="flex flex-wrap gap-2 text-sm font-medium">
+                <button onclick="switchTab('beranda')" id="nav-beranda" class="nav-btn px-4 py-1.5 rounded-full bg-teal-600 text-white font-semibold shadow-lg transition">Beranda</button>
+                <button onclick="switchTab('otak')" id="nav-otak" class="nav-btn px-4 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Otak</button>
+                <button onclick="switchTab('sumsum')" id="nav-sumsum" class="nav-btn px-4 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Sumsum Tulang Belakang</button>
+                <button onclick="switchTab('saraf')" id="nav-saraf" class="nav-btn px-4 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Saraf Tepi</button>
+                <button onclick="switchTab('otot')" id="nav-otot" class="nav-btn px-4 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Otot</button>
+                <button onclick="switchTab('tulang')" id="nav-tulang" class="nav-btn px-4 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Tulang</button>
+                <button onclick="switchTab('sendi')" id="nav-sendi" class="nav-btn px-4 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Sendi</button>
+                <button onclick="switchTab('kuis')" id="nav-kuis" class="nav-btn px-4 py-1.5 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition">Kuis (5 Soal)</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+        <!-- Title Header -->
+        <div class="mb-8" id="page-header">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2 font-serif">Peta Tubuh Interaktif</h1>
+            <p class="text-slate-400 text-base md:text-lg">Klik bagian tubuh pada gambar, atau pilih tombolnya untuk mempelajari sistem saraf dan gerak manusia.</p>
+        </div>
+
+        <!-- Section 1: Interactive Layout Grid (Pembelajaran) -->
+        <div id="section-pembelajaran" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Column: Interactive Body Diagram (SVG) -->
+            <div class="lg:col-span-5 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center relative shadow-xl backdrop-blur-sm min-h-[500px]">
+                <div class="absolute top-4 left-4 text-xs font-mono text-slate-400 flex flex-col gap-1 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-pink-400 inline-block"></span> Pink = Otak</span>
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-300 inline-block"></span> Kuning = Saraf</span>
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span> Merah = Otot</span>
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-slate-200 inline-block"></span> Putih = Tulang & Sendi</span>
+                </div>
+
+                <!-- SVG Human Anatomy Diagram -->
+                <svg viewBox="0 0 300 550" class="w-full max-w-[320px] h-auto drop-shadow-lg">
+                    <!-- Base Silhouette outline -->
+                    <path d="M 150,20 C 130,20 120,35 120,60 C 120,75 130,90 140,95 C 120,105 105,115 95,130 C 85,145 70,210 60,250 C 55,270 65,275 75,270 C 85,260 95,200 100,180 C 100,220 100,280 105,320 C 110,360 110,420 105,500 C 102,520 125,520 130,500 C 135,440 140,360 145,300 L 155,300 C 160,360 165,440 170,500 C 175,520 198,520 195,500 C 190,420 190,360 195,320 C 200,280 200,220 200,180 C 205,200 215,260 225,270 C 235,275 245,270 240,250 C 230,210 215,145 205,130 C 195,115 180,105 160,95 C 170,90 180,75 180,60 C 180,35 170,20 150,20 Z" 
+                          fill="#2a1f1d" stroke="#4a3b32" stroke-width="2" opacity="0.6"/>
+
+                    <!-- Tulang & Sendi Group -->
+                    <g id="svg-tulang" class="body-part cursor-pointer text-slate-100" onclick="selectPart('tulang')">
+                        <!-- Tengkorak -->
+                        <path d="M 130,45 C 130,30 170,30 170,45 C 170,60 165,65 150,65 C 135,65 130,60 130,45 Z" fill="#e0e1dd" opacity="0.8"/>
+                        <!-- Rusuk -->
+                        <path d="M 130,120 Q 150,110 170,120 M 125,135 Q 150,125 175,135 M 128,150 Q 150,140 172,150 M 132,165 Q 150,155 168,165" stroke="#e0e1dd" stroke-width="4" fill="none" opacity="0.8" stroke-linecap="round"/>
+                        <!-- Tulang Lengan & Kaki -->
+                        <line x1="85" y1="160" x2="73" y2="230" stroke="#e0e1dd" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+                        <line x1="215" y1="160" x2="227" y2="230" stroke="#e0e1dd" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+                        <line x1="128" y1="330" x2="120" y2="470" stroke="#e0e1dd" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+                        <line x1="172" y1="330" x2="180" y2="470" stroke="#e0e1dd" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+                    </g>
+
+                    <!-- Sendi Circles -->
+                    <g id="svg-sendi" class="body-part cursor-pointer text-slate-100" onclick="selectPart('sendi')">
+                        <!-- Sendi Bahu -->
+                        <circle cx="105" cy="115" r="7" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+                        <circle cx="195" cy="115" r="7" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+                        <!-- Sendi Siku -->
+                        <circle cx="85" cy="175" r="6" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+                        <circle cx="215" cy="175" r="6" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+                        <!-- Sendi Lutut -->
+                        <circle cx="125" cy="385" r="7" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+                        <circle cx="175" cy="385" r="7" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+                        <!-- Sendi Leher -->
+                        <circle cx="150" cy="80" r="5" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+                    </g>
+
+                    <!-- Otot Group -->
+                    <g id="svg-otot" class="body-part cursor-pointer text-rose-500" onclick="selectPart('otot')">
+                        <!-- Otot Bisep Lengan -->
+                        <ellipse cx="88" cy="150" rx="9" ry="22" fill="#ef476f" opacity="0.85"/>
+                        <ellipse cx="212" cy="150" rx="9" ry="22" fill="#ef476f" opacity="0.85"/>
+                        <!-- Otot Paha -->
+                        <ellipse cx="126" cy="330" rx="12" ry="35" fill="#ef476f" opacity="0.85"/>
+                        <ellipse cx="174" cy="330" rx="12" ry="35" fill="#ef476f" opacity="0.85"/>
+                        <!-- Otot Betis -->
+                        <ellipse cx="120" cy="430" rx="9" ry="25" fill="#ef476f" opacity="0.85"/>
+                        <ellipse cx="180" cy="430" rx="9" ry="25" fill="#ef476f" opacity="0.85"/>
+                    </g>
+
+                    <!-- Sumsum Tulang Belakang & Saraf Tepi -->
+                    <g id="svg-sumsum" class="body-part cursor-pointer text-amber-300" onclick="selectPart('sumsum')">
+                        <!-- Sumsum Tulang Belakang (Tengah) -->
+                        <line x1="150" y1="75" x2="150" y2="280" stroke="#ffd166" stroke-width="6" stroke-linecap="round"/>
+                    </g>
+                    
+                    <g id="svg-saraf" class="body-part cursor-pointer text-amber-300" onclick="selectPart('saraf')">
+                        <!-- Saraf Tepi Cabang -->
+                        <path d="M 150,110 L 95,150 M 150,140 L 75,220 M 150,180 L 70,250" stroke="#ffd166" stroke-width="2.5" fill="none"/>
+                        <path d="M 150,110 L 205,150 M 150,140 L 225,220 M 150,180 L 230,250" stroke="#ffd166" stroke-width="2.5" fill="none"/>
+                        <path d="M 150,240 L 125,360 M 150,270 L 120,460" stroke="#ffd166" stroke-width="2.5" fill="none"/>
+                        <path d="M 150,240 L 175,360 M 150,270 L 180,460" stroke="#ffd166" stroke-width="2.5" fill="none"/>
+                    </g>
+
+                    <!-- Otak Group -->
+                    <g id="svg-otak" class="body-part cursor-pointer text-pink-400" onclick="selectPart('otak')">
+                        <ellipse cx="150" cy="50" rx="22" ry="18" fill="#ff70a6"/>
+                        <!-- Detail lipatan otak -->
+                        <path d="M 135,45 Q 150,40 165,45 M 132,52 Q 150,58 168,52 M 140,58 Q 150,54 160,58" stroke="#0b132b" stroke-width="2" fill="none"/>
+                    </g>
+                </svg>
+
+                <p class="text-xs text-slate-500 mt-4 text-center">Petunjuk: Klik langsung pada organ di diagram tubuh atau gunakan tombol pilihan di panel samping.</p>
+            </div>
+
+            <!-- Right Column: Interactive Detail Panel -->
+            <div class="lg:col-span-7 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl backdrop-blur-sm min-h-[500px] flex flex-col justify-between">
+                <div>
+                    <!-- Fast Selection Buttons -->
+                    <div class="flex flex-wrap gap-2.5 mb-6">
+                        <button onclick="selectPart('otak')" id="btn-otak" class="part-btn px-4 py-2 rounded-full font-medium text-sm border border-slate-700 bg-teal-600 text-white shadow-md transition">Otak</button>
+                        <button onclick="selectPart('sumsum')" id="btn-sumsum" class="part-btn px-4 py-2 rounded-full font-medium text-sm border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Sumsum tulang belakang</button>
+                        <button onclick="selectPart('saraf')" id="btn-saraf" class="part-btn px-4 py-2 rounded-full font-medium text-sm border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Saraf tepi</button>
+                        <button onclick="selectPart('otot')" id="btn-otot" class="part-btn px-4 py-2 rounded-full font-medium text-sm border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Otot</button>
+                        <button onclick="selectPart('tulang')" id="btn-tulang" class="part-btn px-4 py-2 rounded-full font-medium text-sm border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Tulang</button>
+                        <button onclick="selectPart('sendi')" id="btn-sendi" class="part-btn px-4 py-2 rounded-full font-medium text-sm border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Sendi</button>
+                    </div>
+
+                    <!-- Dynamic Card Content -->
+                    <div id="content-display" class="space-y-6">
+                        <div class="border-b border-slate-800 pb-4">
+                            <span id="display-tag" class="text-xs uppercase font-mono tracking-wider px-2.5 py-1 rounded bg-pink-500/10 text-pink-400 border border-pink-500/20">Sistem Saraf Pusat</span>
+                            <h2 id="display-title" class="text-3xl font-extrabold text-white mt-2 font-serif">Otak</h2>
+                        </div>
+
+                        <p id="display-desc" class="text-slate-300 text-base leading-relaxed">
+                            Mengatur dan mengendalikan seluruh aktivitas tubuh.
+                        </p>
+
+                        <div>
+                            <h3 id="display-subtitle" class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Contoh Peran / Fungsi Utama:</h3>
+                            <ul id="display-list" class="space-y-2.5 text-slate-200">
+                                <!-- List items generated by JS -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4 mt-6">
+                    <button onclick="openModal()" class="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-semibold text-sm shadow-lg transition flex items-center gap-2">
+                        <span>Pelajari lebih detail</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                    <span id="display-legend" class="text-xs text-slate-400 font-medium">Warna: pink = otak</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Kuis Interaktif (Hidden by Default) -->
+        <div id="section-kuis" class="hidden max-w-3xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-amber-400 font-serif">Kuis Interaktif Sistem Saraf & Gerak</h2>
+                    <p class="text-sm text-slate-400">Uji pemahamanmu dengan 5 pertanyaan di bawah ini!</p>
+                </div>
+                <div id="quiz-score-badge" class="px-4 py-2 bg-slate-800 rounded-xl border border-slate-700 text-center hidden">
+                    <span class="block text-xs text-slate-400 uppercase">Skor Kamu</span>
+                    <span id="quiz-score-val" class="text-2xl font-extrabold text-amber-400">0 / 100</span>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Container -->
+            <form id="quiz-form" class="space-y-6">
+                <!-- Question 1 -->
+                <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                    <p class="font-semibold text-slate-200 mb-3"><span class="text-amber-400">1.</span> Saat kamu secara spontan menarik tangan ketika menyentuh benda panas, bagian yang mengatur gerak refleks tersebut adalah...</p>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q1" value="A" class="accent-amber-400"> A. Otak Besar
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q1" value="B" class="accent-amber-400"> B. Sumsum Tulang Belakang
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q1" value="C" class="accent-amber-400"> C. Otot Rangka
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q1" value="D" class="accent-amber-400"> D. Sendi Lutut
+                        </label>
+                    </div>
+                    <p id="feedback-q1" class="text-xs mt-2 hidden font-medium"></p>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                    <p class="font-semibold text-slate-200 mb-3"><span class="text-amber-400">2.</span> Organ tubuh yang berfungsi sebagai pusat kendali untuk berpikir, mengingat pelajaran saat ujian, dan mengolah rangsangan adalah...</p>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q2" value="A" class="accent-amber-400"> A. Otak
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q2" value="B" class="accent-amber-400"> B. Saraf Tepi
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q2" value="C" class="accent-amber-400"> C. Tulang Rusuk
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q2" value="D" class="accent-amber-400"> D. Sendi Siku
+                        </label>
+                    </div>
+                    <p id="feedback-q2" class="text-xs mt-2 hidden font-medium"></p>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                    <p class="font-semibold text-slate-200 mb-3"><span class="text-amber-400">3.</span> Mana di bawah ini yang merupakan fungsi utama dari **Tulang** bagi tubuh manusia?</p>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q3" value="A" class="accent-amber-400"> A. Mengatur impuls refleks spontan
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q3" value="B" class="accent-amber-400"> B. Menopang tubuh, melindungi organ dalam, dan menyimpan kalsium
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q3" value="C" class="accent-amber-400"> C. Menghubungkan otak dengan seluruh organ tepi
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q3" value="D" class="accent-amber-400"> D. Menghasilan panas tubuh saat dingin
+                        </label>
+                    </div>
+                    <p id="feedback-q3" class="text-xs mt-2 hidden font-medium"></p>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                    <p class="font-semibold text-slate-200 mb-3"><span class="text-amber-400">4.</span> Bagian sistem gerak yang berfungsi sebagai penghubung dua tulang atau lebih agar tubuh dapat ditekuk dan digerakkan adalah...</p>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q4" value="A" class="accent-amber-400"> A. Otot Jantung
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q4" value="B" class="accent-amber-400"> B. Saraf Tepi
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q4" value="C" class="accent-amber-400"> C. Sendi
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q4" value="D" class="accent-amber-400"> D. Sumsum Tulang Belakang
+                        </label>
+                    </div>
+                    <p id="feedback-q4" class="text-xs mt-2 hidden font-medium"></p>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                    <p class="font-semibold text-slate-200 mb-3"><span class="text-amber-400">5.</span> Menggerakkan tubuh, tersenyum, mengunyah makanan, serta memompa darah merupakan contoh peran dari...</p>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q5" value="A" class="accent-amber-400"> A. Otot
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q5" value="B" class="accent-amber-400"> B. Tulang Tengkorak
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q5" value="C" class="accent-amber-400"> C. Sendi Bahu
+                        </label>
+                        <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:bg-slate-800/80 cursor-pointer">
+                            <input type="radio" name="q5" value="D" class="accent-amber-400"> D. Saraf Sensorik
+                        </label>
+                    </div>
+                    <p id="feedback-q5" class="text-xs mt-2 hidden font-medium"></p>
+                </div>
+
+                <div class="flex gap-4 pt-4">
+                    <button type="button" onclick="submitQuiz()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition">Periksa Jawaban</button>
+                    <button type="button" onclick="resetQuiz()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl transition">Ulangi Kuis</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Modal Detail Tambahan -->
+    <div id="detail-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-800 max-w-2xl w-full rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-lg bg-slate-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <h3 id="modal-title" class="text-2xl font-bold text-cyan-400 mb-4 font-serif">Detail Organ</h3>
+            <div id="modal-body" class="text-slate-300 space-y-4 text-sm leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+                <!-- Modal info loaded via JS -->
+            </div>
+            <div class="mt-6 text-right">
+                <button onclick="closeModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full border-t border-slate-800 py-4 text-center text-xs text-slate-500 bg-slate-950/40">
+        <p>&copy; 2026 Edukasi Sistem Saraf & Gerak Manusia. Interaktif & Komprehensif.</p>
+    </footer>
+
+    <!-- JavaScript Data and Interactive Logic -->
+    <script>
+        // Full Anatomy Data Definition
+        const dataAnatomi = {
+            otak: {
+                tag: "Sistem Saraf Pusat",
+                title: "Otak",
+                desc: "mengatur dan mengendalikan seluruh aktivitas tubuh",
+                legend: "Warna: pink = otak",
+                items: [
+                    "<b>Berpikir dan mengingat:</b> Mengingat pelajaran saat ujian.",
+                    "<b>Mengatur gerakan:</b> Berjalan, berlari, dan menulis.",
+                    "<b>Mengolah rangsangan:</b> Melihat lampu merah dan berhenti."
+                ],
+                detailHTML: `
+                    <p>Otak merupakan pusat kendali utama dari seluruh fungsi tubuh manusia. Otak menerima impuls saraf dari seluruh organ indera, mengolah informasi, lalu mengirimkan respons balik berupa perintah gerakan atau tindakan.</p>
+                    <p><b>Bagian-bagian Otak:</b></p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><b>Otak Besar (Cerebrum):</b> Mengendalikan proses berpikir, daya ingat, kecerdasan, emosi, dan gerakan sadar.</li>
+                        <li><b>Otak Kecil (Cerebellum):</b> Memelihara keseimbangan tubuh serta koordinasi gerakan otot.</li>
+                        <li><b>Batang Otak (Brainstem):</b> Mengontrol fungsi otonom penting seperti pernapasan, detak jantung, dan tekanan darah.</li>
+                    </ul>
+                `
+            },
+            sumsum: {
+                tag: "Sistem Saraf Pusat",
+                title: "Sumsum tulang belakang",
+                desc: "menghantarkan impuls saraf antara otak dan tubuh serta mengatur gerak refleks.",
+                legend: "Warna: kuning (pusat) = sumsum tulang belakang",
+                items: [
+                    "Menarik tangan secara spontan saat menyentuh benda panas.",
+                    "Mengangkat kaki saat menginjak benda tajam.",
+                    "Meluruskan kaki saat lutut diketuk dokter."
+                ],
+                detailHTML: `
+                    <p>Sumsum tulang belakang (Spinal Cord) terletak di dalam rongga tulang belakang. Berfungsi sebagai jalan tol utama pengiriman pesan elektrik antara otak dan seluruh organ tubuh.</p>
+                    <p><b>Gerak Refleks:</b> Merupakan respons otomatis yang sangat cepat tanpa melalui pengolahan di otak terlebih dahulu. Impuls berjalan dari reseptor keluhan → saraf sensorik → sumsum tulang belakang → saraf motorik → otot/efektor.</p>
+                `
+            },
+            saraf: {
+                tag: "Sistem Saraf Tepi",
+                title: "Saraf tepi",
+                desc: "menghubungkan otak dan sumsum tulang belakang dengan seluruh bagian tubuh.",
+                legend: "Warna: kuning (cabang) = saraf tepi",
+                items: [
+                    "Merasakan panas saat menyentuh air hangat.",
+                    "Menggerakan tangan untuk mengambil buku.",
+                    "Merasakan sakit saat terkena cubitan."
+                ],
+                detailHTML: `
+                    <p>Saraf tepi terdiri dari jutaan serabut saraf yang meluas ke seluruh bagian ekstremitas dan organ internal manusia.</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><b>Saraf Sensorik (Afren):</b> Membawa rangsangan dari indera/kulit menuju ke sistem saraf pusat.</li>
+                        <li><b>Saraf Motorik (Eferen):</b> Membawa perintah dari sistem saraf pusat menuju ke otot/kelenjar.</li>
+                    </ul>
+                `
+            },
+            tulang: {
+                tag: "Sistem Gerak (Pasif)",
+                title: "Tulang",
+                desc: "Menopang dan memberi bentuk tubuh, melindungi organ dalam (seperti otak dan jantung), membantu pergerakan tubuh bersama otot, tempat melekatnya otot, membentuk sel darah di sumsum tulang, serta menyimpan mineral (kalsium dan fosfor).",
+                legend: "Warna: putih = tulang",
+                items: [
+                    "Tulang kaki membantu kita berjalan.",
+                    "Tulang tengkorak melindungi otak.",
+                    "Tulang rusuk melindungi jantung dan paru-paru."
+                ],
+                detailHTML: `
+                    <p>Tulang membentuk kerangka tubuh (skeleton) yang kokoh. Tanpa tulang, tubuh tidak dapat berdiri tegak. Tulang diklasifikasikan sebagai alat gerak pasif karena membutuhkan dorongan otot untuk dapat bergerak.</p>
+                `
+            },
+            sendi: {
+                tag: "Sistem Gerak (Penghubung)",
+                title: "Sendi",
+                desc: "Menghubungkan dua tulang atau lebih, memungkinkan tubuh bergerak, serta membantu tubuh melakukan berbagai gerakan.",
+                legend: "Warna: titik putih = sendi",
+                items: [
+                    "<b>Sendi lutut:</b> membantu kita berjalan dan berlari.",
+                    "<b>Sendi siku:</b> membantu menekuk tangan.",
+                    "<b>Sendi bahu:</b> membantu mengangkat tangan.",
+                    "<b>Sendi leher:</b> membantu menoleh ke kanan dan kiri."
+                ],
+                detailHTML: `
+                    <p>Sendi adalah struktur artikulasi penghubung antar tulang. Jenis-jenis sendi meliputi Sendi Engsel (lutut, siku), Sendi Peluru (bahu, paha), Sendi Putar (leher), Sendi Pelana, dan Sendi Geser.</p>
+                `
+            },
+            otot: {
+                tag: "Sistem Gerak (Aktif)",
+                title: "Otot",
+                desc: "Menggerakkan tubuh, menjaga postur tubuh, menstabilkan persendian, menghasilkan panas tubuh, dan membantu kerja organ dalam.",
+                legend: "Warna: merah = otot",
+                items: [
+                    "Berjalan dan berlari.",
+                    "Mengangkat tas atau barang.",
+                    "Menulis menggunakan tangan.",
+                    "Tersenyum dan berbicara.",
+                    "Mengunyah makanan.",
+                    "Memompa darah melalui otot jantung."
+                ],
+                detailHTML: `
+                    <p>Otot merupakan alat gerak aktif yang mampu berkontraksi (memendek) dan relaksasi (memanjang). Terdapat 3 jenis otot: Otot Rangka/Lurik (sadar), Otot Polos (tidak sadar pada organ dalam), dan Otot Jantung.</p>
+                `
+            }
+        };
+
+        // Correct Answer Key for Quiz
+        const quizAnswers = {
+            q1: "B",
+            q2: "A",
+            q3: "B",
+            q4: "C",
+            q5: "A"
+        };
+
+        let currentActivePart = 'otak';
+
+        // Update Content Function
+        function selectPart(partKey) {
+            if (!dataAnatomi[partKey]) return;
+            currentActivePart = partKey;
+
+            const data = dataAnatomi[partKey];
+
+            // Update Text
+            document.getElementById('display-tag').innerText = data.tag;
+            document.getElementById('display-title').innerText = data.title;
+            document.getElementById('display-desc').innerText = data.desc;
+            document.getElementById('display-legend').innerText = data.legend;
+
+            // Update List
+            const listEl = document.getElementById('display-list');
+            listEl.innerHTML = data.items.map(item => `
+                <li class="flex items-start gap-2.5">
+                    <span class="text-cyan-400 mt-1">•</span>
+                    <span>${item}</span>
+                </li>
+            `).join('');
+
+            // Highlight Active Fast Selection Buttons
+            document.querySelectorAll('.part-btn').forEach(btn => {
+                btn.classList.remove('bg-teal-600', 'text-white', 'shadow-md');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            const activeBtn = document.getElementById(`btn-${partKey}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+                activeBtn.classList.add('bg-teal-600', 'text-white', 'shadow-md');
+            }
+
+            // Highlight SVG Groups
+            document.querySelectorAll('.body-part').forEach(group => {
+                group.classList.remove('active');
+            });
+            const activeSvg = document.getElementById(`svg-${partKey}`);
+            if (activeSvg) {
+                activeSvg.classList.add('active');
+            }
+        }
+
+        // Switch Navigation Tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-teal-600', 'bg-amber-500', 'text-white', 'text-slate-950');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) {
+                if (tabName === 'kuis') {
+                    activeNav.classList.remove('bg-slate-800', 'text-slate-300');
+                    activeNav.classList.add('bg-amber-500', 'text-slate-950');
+                } else {
+                    activeNav.classList.remove('bg-slate-800', 'text-slate-300');
+                    activeNav.classList.add('bg-teal-600', 'text-white');
+                }
+            }
+
+            const secPembelajaran = document.getElementById('section-pembelajaran');
+            const secKuis = document.getElementById('section-kuis');
+            const pageHeader = document.getElementById('page-header');
+
+            if (tabName === 'kuis') {
+                secPembelajaran.classList.add('hidden');
+                secKuis.classList.remove('hidden');
+                pageHeader.classList.add('hidden');
+            } else {
+                secPembelajaran.classList.remove('hidden');
+                secKuis.classList.add('hidden');
+                pageHeader.classList.remove('hidden');
+
+                if (dataAnatomi[tabName]) {
+                    selectPart(tabName);
+                } else if (tabName === 'beranda') {
+                    selectPart('otak');
+                }
+            }
+        }
+
+        // Modal Logic
+        function openModal() {
+            const data = dataAnatomi[currentActivePart];
+            document.getElementById('modal-title').innerText = `${data.title} (${data.tag})`;
+            document.getElementById('modal-body').innerHTML = data.detailHTML;
+            document.getElementById('detail-modal').classList.remove('hidden');
+            document.getElementById('detail-modal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+            document.getElementById('detail-modal').classList.remove('flex');
+        }
+
+        // Quiz Submit Logic
+        function submitQuiz() {
+            let score = 0;
+            const form = document.getElementById('quiz-form');
+
+            for (let q in quizAnswers) {
+                const selected = form.elements[q].value;
+                const feedbackEl = document.getElementById(`feedback-${q}`);
+                feedbackEl.classList.remove('hidden', 'text-emerald-400', 'text-rose-400', 'text-amber-400');
+
+                if (selected === quizAnswers[q]) {
+                    score += 20;
+                    feedbackEl.innerText = "✓ Benar!";
+                    feedbackEl.classList.add('text-emerald-400');
+                } else if (selected) {
+                    feedbackEl.innerText = `✗ Kurang tepat. Jawaban yang benar adalah (${quizAnswers[q]})`;
+                    feedbackEl.classList.add('text-rose-400');
+                } else {
+                    feedbackEl.innerText = "! Kamu belum menjawab pertanyaan ini.";
+                    feedbackEl.classList.add('text-amber-400');
+                }
+            }
+
+            const badge = document.getElementById('quiz-score-badge');
+            const scoreVal = document.getElementById('quiz-score-val');
+            badge.classList.remove('hidden');
+            scoreVal.innerText = `${score} / 100`;
+        }
+
+        // Quiz Reset Logic
+        function resetQuiz() {
+            document.getElementById('quiz-form').reset();
+            document.getElementById('quiz-score-badge').classList.add('hidden');
+            for (let i = 1; i <= 5; i++) {
+                const feedbackEl = document.getElementById(`feedback-q${i}`);
+                feedbackEl.classList.add('hidden');
+            }
+        }
+
+        // Initial Load Setup
+        window.onload = function() {
+            selectPart('otak');
+        };
+    </script>
+</body>
+</html>
